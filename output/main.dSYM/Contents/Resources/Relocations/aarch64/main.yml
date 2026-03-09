@@ -1,0 +1,23 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/emin.dabahov/Documents/Projects/University/Load-Balancing/output/main'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003324, symSize: 0x23C }
+  - { offsetInCU: 0x4D, offset: 0x4D, size: 0x8, addend: 0x0, symName: _log_fp, symObjAddr: 0x2980, symBinAddr: 0x100008078, symSize: 0x0 }
+  - { offsetInCU: 0x25E, offset: 0x25E, size: 0x8, addend: 0x0, symName: _lock, symObjAddr: 0xB78, symBinAddr: 0x100008008, symSize: 0x0 }
+  - { offsetInCU: 0x2BD, offset: 0x2BD, size: 0x8, addend: 0x0, symName: _writer_pending, symObjAddr: 0x298C, symBinAddr: 0x100008084, symSize: 0x0 }
+  - { offsetInCU: 0x2D2, offset: 0x2D2, size: 0x8, addend: 0x0, symName: _replica_readers, symObjAddr: 0x2994, symBinAddr: 0x10000808C, symSize: 0x0 }
+  - { offsetInCU: 0x2F3, offset: 0x2F3, size: 0x8, addend: 0x0, symName: _active_readers, symObjAddr: 0x2990, symBinAddr: 0x100008088, symSize: 0x0 }
+  - { offsetInCU: 0x308, offset: 0x308, size: 0x8, addend: 0x0, symName: _lock_condition, symObjAddr: 0xBB8, symBinAddr: 0x100008048, symSize: 0x0 }
+  - { offsetInCU: 0x360, offset: 0x360, size: 0x8, addend: 0x0, symName: _is_simulation_running, symObjAddr: 0xB70, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0x37A, offset: 0x37A, size: 0x8, addend: 0x0, symName: _write_version, symObjAddr: 0x2988, symBinAddr: 0x100008080, symSize: 0x0 }
+  - { offsetInCU: 0x38A, offset: 0x38A, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003324, symSize: 0x23C }
+  - { offsetInCU: 0x3FD, offset: 0x3FD, size: 0x8, addend: 0x0, symName: _write_replicas, symObjAddr: 0x23C, symBinAddr: 0x100003560, symSize: 0xF0 }
+  - { offsetInCU: 0x467, offset: 0x467, size: 0x8, addend: 0x0, symName: _writer, symObjAddr: 0x32C, symBinAddr: 0x100003650, symSize: 0x180 }
+  - { offsetInCU: 0x4AB, offset: 0x4AB, size: 0x8, addend: 0x0, symName: _sleep_ms, symObjAddr: 0x4AC, symBinAddr: 0x1000037D0, symSize: 0x60 }
+  - { offsetInCU: 0x4DD, offset: 0x4DD, size: 0x8, addend: 0x0, symName: _rrand, symObjAddr: 0x50C, symBinAddr: 0x100003830, symSize: 0x50 }
+  - { offsetInCU: 0x513, offset: 0x513, size: 0x8, addend: 0x0, symName: _reader, symObjAddr: 0x55C, symBinAddr: 0x100003880, symSize: 0x1B0 }
+  - { offsetInCU: 0x565, offset: 0x565, size: 0x8, addend: 0x0, symName: _log_event, symObjAddr: 0x70C, symBinAddr: 0x100003A30, symSize: 0x230 }
+  - { offsetInCU: 0x5C5, offset: 0x5C5, size: 0x8, addend: 0x0, symName: _tstamp, symObjAddr: 0x93C, symBinAddr: 0x100003C60, symSize: 0x8C }
+  - { offsetInCU: 0x605, offset: 0x605, size: 0x8, addend: 0x0, symName: _least_loaded, symObjAddr: 0x9C8, symBinAddr: 0x100003CEC, symSize: 0x7C }
+...
