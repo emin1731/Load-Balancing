@@ -7,7 +7,7 @@
 
 #define NUM_REPLICAS     3
 #define SIM_SECONDS     10
-#define MAX_READERS    10
+#define MAX_READERS    50
 
 // shared state
 
