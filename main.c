@@ -1,213 +1,248 @@
-/*
- * Readers-Writers Problem with Load Balancing
- * ---------------------------------------------------------
- * Compile: gcc -std=c11 -Wall -pthread -o rw readers_writers_simple.c
- * Run    : ./rw
- *
- * Synchronisation (single mutex + one condition variable):
- *   - writer sets writer_pending=1  →  new readers wait
- *   - writer waits until active_readers==0  →  then writes
- *   - after writing, writer clears flag and broadcasts to wake readers
- */
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <pthread.h>
 #include <time.h>
 
-// Settings
+// settings
 
 #define NUM_REPLICAS     3
-#define SIM_SECONDS     20
-#define MAX_READERS    200
+#define SIM_SECONDS     10
+#define MAX_READERS    10
 
-// Shared state
+// shared state
 
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t  lock_condition = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t  stateChanged = PTHREAD_COND_INITIALIZER;
 
-static int active_readers        = 0;
-static int replica_readers[NUM_REPLICAS];  // readers per replica
-static int writer_pending        = 0;
-static int write_version         = 0;
-static volatile int is_simulation_running  = 1;
+static int activeReaders         = 0;
+static int replicaReaders[NUM_REPLICAS];
+static int writerPending         = 0;
+static int writerActive          = 0;
+static int writeVersion          = 0;
+static volatile int isSimulationRunning = 1;
+static char latestContent[128]   = "initial content v0";
 
-static FILE *log_fp;
+static FILE *logFile;
 
-// Helpers
+// helper funcs
 
-// Sleep for ms milliseconds
-static void sleep_ms(int ms)
+// sleep for ms
+static void sleepMs(int milliseconds)
 {
-    struct timespec t = { ms / 1000, (ms % 1000) * 1000000L };
-    nanosleep(&t, NULL);
+    struct timespec sleepTime = { milliseconds / 1000, (milliseconds % 1000) * 1000000L };
+    nanosleep(&sleepTime, NULL);
 }
 
-// Random integer in [lo, hi]
-static int rrand(int lo, int hi)
+// random int in range
+static int randomInRange(int min, int max)
 {
-    return lo + rand() % (hi - lo + 1);
+    return min + rand() % (max - min + 1);
 }
 
-// Timestamp string "HH:MM:SS.mmm"
-static void tstamp(char *buf)
+// print one log line (lock should be held)
+static void logEvent(const char *tag, const char *who, int replica, const char *content)
 {
-    struct timespec ts;
-    struct tm tm;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    localtime_r(&ts.tv_sec, &tm);
-    strftime(buf, 16, "%H:%M:%S", &tm);
-    sprintf(buf + 8, ".%03d", (int)(ts.tv_nsec / 1000000));
+    if (replica >= 0)
+    fprintf(logFile, "%s %s replica=%d active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
+                tag, 
+                who, 
+                replica + 1, 
+                activeReaders,
+                replicaReaders[0], 
+                replicaReaders[1], 
+                replicaReaders[2],
+                writerActive ? "yes" : "no",
+                content ? content : "no content"
+            );
+    else
+    fprintf(logFile, "%s %s active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
+                tag, 
+                who, 
+                activeReaders,
+                replicaReaders[0], 
+                replicaReaders[1], 
+                replicaReaders[2],
+                writerActive ? "yes" : "no",
+                content ? content : "no content"
+            );
+    fflush(logFile);
+
+    if (replica >= 0)
+    printf("%s %s replica=%d active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
+                tag, 
+                who, 
+                replica + 1, 
+                activeReaders,
+                replicaReaders[0], 
+                replicaReaders[1], 
+                replicaReaders[2],
+                writerActive ? "yes" : "no",
+                content ? content : "no content"
+            );
+    else
+    printf("%s %s active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
+                tag, 
+                who, 
+                activeReaders,
+                replicaReaders[0], 
+                replicaReaders[1], 
+                replicaReaders[2],
+                writerActive ? "yes" : "no",
+                content ? content : "no content"
+        );
 }
 
-// Log one line to file + stdout (call with lock held for consistency)
-static void log_event(const char *tag, const char *who, int replica)
+// get the least loaded replica
+static int leastLoaded(void)
 {
-    char ts[16];
-    tstamp(ts);
+    int bestIndex = 0;
 
-    char rep[32] = "";
-    if (replica >= 0) sprintf(rep, " replica=%d", replica + 1);
+    for (int i = 1; i < NUM_REPLICAS; i++) {
+        if (replicaReaders[i] < replicaReaders[bestIndex]) {
+            bestIndex = i;
+        }
+    }
 
-    fprintf(log_fp, "%s [%-14s] %-12s%s active=%d loads=[%d,%d,%d] writer=%s\n",
-            ts, tag, who, rep, active_readers,
-            replica_readers[0], replica_readers[1], replica_readers[2],
-            writer_pending ? "yes" : "no");
-    fflush(log_fp);
-
-    printf("%s [%-14s] %-12s%s active=%d loads=[%d,%d,%d] writer=%s\n",
-           ts, tag, who, rep, active_readers,
-           replica_readers[0], replica_readers[1], replica_readers[2],
-           writer_pending ? "yes" : "no");
+    return bestIndex;
 }
 
-// Return index of least-loaded replica (call with lock held)
-static int least_loaded(void)
+// write same text to all replicas
+static void writeReplicas(const char *content)
 {
-    int best = 0;
-    for (int i = 1; i < NUM_REPLICAS; i++)
-        if (replica_readers[i] < replica_readers[best])
-            best = i;
-    return best;
-}
-
-// Write content to all replica files
-static void write_replicas(const char *content)
-{
-    char name[32];
+    char replicaFileName[32];
     for (int i = 0; i < NUM_REPLICAS; i++) {
-        sprintf(name, "replica_%d.txt", i + 1);
-        FILE *f = fopen(name, "w");
-        if (f) { fputs(content, f); fclose(f); }
+
+        sprintf(replicaFileName, "replica_%d.txt", i + 1);
+
+        FILE *replicaFile = fopen(replicaFileName, "w");
+
+        if (replicaFile) {
+            fputs(content, replicaFile);
+            fclose(replicaFile);
+        }
     }
 }
 
-// Reader thread
+// reader thread
 
 static void *reader(void *arg)
 {
-    int  id = (int)(long)arg;
-    char name[20];
-    sprintf(name, "Reader-%d", id);
+    int readerId = (int)(long)arg;
+    char readerName[20];
+    sprintf(readerName, "Reader-%d", readerId);
 
-    // reader sjould wait if a writer is pending. 
+    // if writer waiting, reader waits too
     pthread_mutex_lock(&lock);
-    while (writer_pending)
-        pthread_cond_wait(&lock_condition, &lock);
+    while (writerPending)
+        pthread_cond_wait(&stateChanged, &lock);
 
-    // this will choose the least loaded replica for reading.  
-    int r = least_loaded();
-    replica_readers[r]++;
-    active_readers++;
-    log_event("READ_START", name, r);
+    // choose least loaded replica
+    int selectedReplicaIndex = leastLoaded();
+    replicaReaders[selectedReplicaIndex]++;
+    activeReaders++;
+    logEvent("READ_START", readerName, selectedReplicaIndex, "-");
     pthread_mutex_unlock(&lock);
 
-    // the read process is stimulated with the sleeping for a random time.
-    sleep_ms(rrand(50, 200));
+    // read one replica file once
+    char replicaFileName[32];
+    sprintf(replicaFileName, "replica_%d.txt", selectedReplicaIndex + 1);
+    FILE *replicaFile = fopen(replicaFileName, "r");
+    if (replicaFile) {
+        char readBuffer[128];
+        fgets(readBuffer, sizeof(readBuffer), replicaFile);
+        fclose(replicaFile);
+    }
 
-    // exit critical section and update the state
+    // simulate reading
+    sleepMs(randomInRange(50, 200));
+
+    // done reading, update counters
     pthread_mutex_lock(&lock);
-    replica_readers[r]--;
-    active_readers--;
-    log_event("READ_DONE", name, r);
-    if (active_readers == 0)
-        pthread_cond_broadcast(&lock_condition); // wake writer if it's waiting
+    replicaReaders[selectedReplicaIndex]--;
+    activeReaders--;
+    logEvent("READ_DONE", readerName, selectedReplicaIndex, "-");
+    if (activeReaders == 0)
+        pthread_cond_broadcast(&stateChanged);
     pthread_mutex_unlock(&lock);
 
     return NULL;
 }
 
-// Writer thread
+// writer thread
 
 static void *writer(void *arg)
 {
     (void)arg;
 
-    while (is_simulation_running) {
-        // the writer should wait for a random time before writing
-        sleep_ms(rrand(1000, 3000));
-        if (!is_simulation_running) break;
+    while (isSimulationRunning) {
+        // wait some time before write
+        sleepMs(randomInRange(1000, 3000));
+        if (!isSimulationRunning)
+            break;
 
-        // when it writes it is bloking the readers 
+        // block new readers
         pthread_mutex_lock(&lock);
-        writer_pending = 1;
-        log_event("WRITE_PENDING", "Writer", -1);
+        writerPending = 1;
+        logEvent("WRITE_PENDING", "Writer", -1, latestContent);
 
-        // wait until all active readers are done
-        while (active_readers > 0)
-            pthread_cond_wait(&lock_condition, &lock);
+        // wait until current readers finish
+        while (activeReaders > 0)
+            pthread_cond_wait(&stateChanged, &lock);
 
-        // this will write all replicas 
-        write_version++;
+        // write same version to all replicas
+        writerActive = 1;
+        writeVersion++;
         char content[128];
-        sprintf(content, "Version %d written by Writer.", write_version);
-        write_replicas(content);
-        log_event("WRITE_DONE", "Writer", -1);
+        sprintf(content, "Version %d written by Writer.", writeVersion);
+        writeReplicas(content);
+        snprintf(latestContent, sizeof(latestContent), "%s", content);
+        logEvent("WRITE_DONE", "Writer", -1, latestContent);
+        writerActive = 0;
 
-        // it finishes and allows readers to proceed
-        writer_pending = 0;
-        pthread_cond_broadcast(&lock_condition);
+        // let readers continue
+        writerPending = 0;
+        pthread_cond_broadcast(&stateChanged);
         pthread_mutex_unlock(&lock);
     }
 
     return NULL;
 }
 
-// Main
+// main
 int main(void)
 {
     srand((unsigned)time(NULL));
-    log_fp = fopen("simulation.log", "w");
-
-    // initialize replicas with initial content
-    write_replicas("initial content v0");
-    printf("simulation started (%d seconds)\n\n", SIM_SECONDS);
-
-    /* Start writer */
-    pthread_t writer_thread;
-    pthread_create(&writer_thread, NULL, writer, NULL);
-
-    /* Spawn readers at random intervals for SIM_SECONDS */
-    pthread_t reader_thread[MAX_READERS];
-    int n = 0;
-    time_t start = time(NULL);
-    while (time(NULL) - start < SIM_SECONDS && n < MAX_READERS) {
-        sleep_ms(rrand(100, 500));
-        pthread_create(&reader_thread[n], NULL, reader, (void *)(long)(n + 1));
-        n++;
+    logFile = fopen("simulation.log", "w");
+    if (!logFile) {
+        perror("simulation.log");
+        return 1;
     }
 
-    /* Wait for all readers */
-    for (int i = 0; i < n; i++)
-        pthread_join(reader_thread[i], NULL);
+    // init replicas with starting text
+    writeReplicas("initial content v0");
+    printf("simulation started for %d sec\n\n", SIM_SECONDS);
 
-    is_simulation_running = 0;
-    pthread_join(writer_thread, NULL);
+    // start writer thread
+    pthread_t writerThread;
+    pthread_create(&writerThread, NULL, writer, NULL);
 
-    /* Summary */
-    printf("\ndone: %d readers; %d writes\n", n, write_version);
-    fprintf(log_fp, "\ndone: %d readers; %d writes\n", n, write_version);
-    fclose(log_fp);
+    // create readers in random intervals
+    pthread_t readerThread[MAX_READERS];
+    int totalReadersSpawned = 0;
+    time_t simulationStartTime = time(NULL);
+    while (time(NULL) - simulationStartTime < SIM_SECONDS && totalReadersSpawned < MAX_READERS) {
+        sleepMs(randomInRange(100, 500));
+        pthread_create(&readerThread[totalReadersSpawned], NULL, reader, (void *)(long)(totalReadersSpawned + 1));
+        totalReadersSpawned++;
+    }
+
+    // wait all readers
+    for (int readerIndex = 0; readerIndex < totalReadersSpawned; readerIndex++)
+        pthread_join(readerThread[readerIndex], NULL);
+
+    isSimulationRunning = 0;
+    pthread_join(writerThread, NULL);
+
+    fclose(logFile);
     return 0;
 }

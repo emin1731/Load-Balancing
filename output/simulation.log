@@ -1,148 +1,22 @@
-20:03:58.047 [READ_START    ] Reader-1     replica=1 active=1 loads=[1,0,0] writer=no
-20:03:58.186 [READ_DONE     ] Reader-1     replica=1 active=0 loads=[0,0,0] writer=no
-20:03:58.372 [READ_START    ] Reader-2     replica=1 active=1 loads=[1,0,0] writer=no
-20:03:58.568 [READ_DONE     ] Reader-2     replica=1 active=0 loads=[0,0,0] writer=no
-20:03:58.822 [READ_START    ] Reader-3     replica=1 active=1 loads=[1,0,0] writer=no
-20:03:59.009 [READ_DONE     ] Reader-3     replica=1 active=0 loads=[0,0,0] writer=no
-20:03:59.313 [READ_START    ] Reader-4     replica=1 active=1 loads=[1,0,0] writer=no
-20:03:59.424 [READ_DONE     ] Reader-4     replica=1 active=0 loads=[0,0,0] writer=no
-20:03:59.731 [READ_START    ] Reader-5     replica=1 active=1 loads=[1,0,0] writer=no
-20:03:59.840 [WRITE_PENDING ] Writer       active=1 loads=[1,0,0] writer=yes
-20:03:59.849 [READ_DONE     ] Reader-5     replica=1 active=0 loads=[0,0,0] writer=yes
-20:03:59.856 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:00.147 [READ_START    ] Reader-6     replica=1 active=1 loads=[1,0,0] writer=no
-20:04:00.227 [READ_DONE     ] Reader-6     replica=1 active=0 loads=[0,0,0] writer=no
-20:04:00.589 [READ_START    ] Reader-7     replica=1 active=1 loads=[1,0,0] writer=no
-20:04:00.676 [READ_DONE     ] Reader-7     replica=1 active=0 loads=[0,0,0] writer=no
-20:04:01.019 [READ_START    ] Reader-8     replica=1 active=1 loads=[1,0,0] writer=no
-20:04:01.173 [READ_DONE     ] Reader-8     replica=1 active=0 loads=[0,0,0] writer=no
-20:04:01.313 [READ_START    ] Reader-9     replica=1 active=1 loads=[1,0,0] writer=no
-20:04:01.398 [READ_DONE     ] Reader-9     replica=1 active=0 loads=[0,0,0] writer=no
-20:04:01.551 [READ_START    ] Reader-10    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:01.668 [READ_DONE     ] Reader-10    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:01.770 [READ_START    ] Reader-11    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:01.970 [READ_DONE     ] Reader-11    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:02.072 [READ_START    ] Reader-12    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:02.218 [READ_DONE     ] Reader-12    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:02.387 [READ_START    ] Reader-13    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:02.497 [READ_DONE     ] Reader-13    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:02.651 [WRITE_PENDING ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:02.653 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:02.875 [READ_START    ] Reader-14    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:02.975 [READ_DONE     ] Reader-14    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:03.196 [READ_START    ] Reader-15    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:03.357 [READ_DONE     ] Reader-15    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:03.487 [READ_START    ] Reader-16    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:03.602 [READ_DONE     ] Reader-16    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:03.736 [READ_START    ] Reader-17    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:03.865 [READ_DONE     ] Reader-17    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:04.057 [READ_START    ] Reader-18    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:04.126 [READ_DONE     ] Reader-18    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:04.162 [WRITE_PENDING ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:04.163 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:04.433 [READ_START    ] Reader-19    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:04.570 [READ_START    ] Reader-20    replica=2 active=2 loads=[1,1,0] writer=no
-20:04:04.578 [READ_DONE     ] Reader-19    replica=1 active=1 loads=[0,1,0] writer=no
-20:04:04.759 [READ_DONE     ] Reader-20    replica=2 active=0 loads=[0,0,0] writer=no
-20:04:04.857 [READ_START    ] Reader-21    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:04.952 [READ_DONE     ] Reader-21    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:05.000 [READ_START    ] Reader-22    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:05.135 [READ_DONE     ] Reader-22    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:05.195 [READ_START    ] Reader-23    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:05.333 [READ_DONE     ] Reader-23    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:05.364 [READ_START    ] Reader-24    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:05.460 [WRITE_PENDING ] Writer       active=1 loads=[1,0,0] writer=yes
-20:04:05.462 [READ_DONE     ] Reader-24    replica=1 active=0 loads=[0,0,0] writer=yes
-20:04:05.464 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:05.643 [READ_START    ] Reader-25    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:05.740 [READ_DONE     ] Reader-25    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:05.890 [READ_START    ] Reader-26    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:05.994 [READ_DONE     ] Reader-26    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:06.074 [READ_START    ] Reader-27    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:06.194 [READ_DONE     ] Reader-27    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:06.571 [READ_START    ] Reader-28    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:06.671 [READ_DONE     ] Reader-28    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:06.776 [READ_START    ] Reader-29    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:06.790 [WRITE_PENDING ] Writer       active=1 loads=[1,0,0] writer=yes
-20:04:06.866 [READ_DONE     ] Reader-29    replica=1 active=0 loads=[0,0,0] writer=yes
-20:04:06.867 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:07.187 [READ_START    ] Reader-30    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:07.309 [READ_DONE     ] Reader-30    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:07.691 [READ_START    ] Reader-31    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:07.830 [READ_DONE     ] Reader-31    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:07.976 [READ_START    ] Reader-32    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:08.117 [READ_START    ] Reader-33    replica=2 active=2 loads=[1,1,0] writer=no
-20:04:08.135 [READ_DONE     ] Reader-32    replica=1 active=1 loads=[0,1,0] writer=no
-20:04:08.178 [WRITE_PENDING ] Writer       active=1 loads=[0,1,0] writer=yes
-20:04:08.252 [READ_DONE     ] Reader-33    replica=2 active=0 loads=[0,0,0] writer=yes
-20:04:08.254 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:08.323 [READ_START    ] Reader-34    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:08.482 [READ_DONE     ] Reader-34    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:08.815 [READ_START    ] Reader-35    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:08.955 [READ_DONE     ] Reader-35    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:09.270 [READ_START    ] Reader-36    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:09.322 [WRITE_PENDING ] Writer       active=1 loads=[1,0,0] writer=yes
-20:04:09.348 [READ_DONE     ] Reader-36    replica=1 active=0 loads=[0,0,0] writer=yes
-20:04:09.349 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:09.687 [READ_START    ] Reader-37    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:09.845 [READ_DONE     ] Reader-37    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:09.860 [READ_START    ] Reader-38    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:10.052 [READ_DONE     ] Reader-38    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:10.082 [READ_START    ] Reader-39    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:10.144 [READ_DONE     ] Reader-39    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:10.366 [READ_START    ] Reader-40    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:10.439 [READ_DONE     ] Reader-40    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:10.563 [WRITE_PENDING ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:10.565 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:10.772 [READ_START    ] Reader-41    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:10.828 [READ_DONE     ] Reader-41    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:10.988 [READ_START    ] Reader-42    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:11.155 [READ_DONE     ] Reader-42    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:11.220 [READ_START    ] Reader-43    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:11.343 [READ_DONE     ] Reader-43    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:11.681 [READ_START    ] Reader-44    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:11.866 [READ_DONE     ] Reader-44    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:11.866 [READ_START    ] Reader-45    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:12.028 [READ_DONE     ] Reader-45    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:12.090 [READ_START    ] Reader-46    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:12.124 [WRITE_PENDING ] Writer       active=1 loads=[1,0,0] writer=yes
-20:04:12.195 [READ_DONE     ] Reader-46    replica=1 active=0 loads=[0,0,0] writer=yes
-20:04:12.232 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:12.401 [READ_START    ] Reader-47    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:12.549 [READ_DONE     ] Reader-47    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:12.887 [READ_START    ] Reader-48    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:13.015 [READ_START    ] Reader-49    replica=2 active=2 loads=[1,1,0] writer=no
-20:04:13.047 [READ_DONE     ] Reader-48    replica=1 active=1 loads=[0,1,0] writer=no
-20:04:13.074 [READ_DONE     ] Reader-49    replica=2 active=0 loads=[0,0,0] writer=no
-20:04:13.199 [READ_START    ] Reader-50    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:13.306 [READ_DONE     ] Reader-50    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:13.398 [WRITE_PENDING ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:13.398 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:13.615 [READ_START    ] Reader-51    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:13.703 [READ_DONE     ] Reader-51    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:13.850 [READ_START    ] Reader-52    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:14.001 [READ_DONE     ] Reader-52    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:14.210 [READ_START    ] Reader-53    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:14.319 [READ_DONE     ] Reader-53    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:14.641 [READ_START    ] Reader-54    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:14.758 [READ_DONE     ] Reader-54    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:14.760 [READ_START    ] Reader-55    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:14.825 [READ_DONE     ] Reader-55    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:15.143 [READ_START    ] Reader-56    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:15.252 [READ_DONE     ] Reader-56    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:15.511 [READ_START    ] Reader-57    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:15.677 [READ_DONE     ] Reader-57    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:15.925 [READ_START    ] Reader-58    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:16.115 [READ_DONE     ] Reader-58    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:16.117 [WRITE_PENDING ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:16.119 [WRITE_DONE    ] Writer       active=0 loads=[0,0,0] writer=yes
-20:04:16.388 [READ_START    ] Reader-59    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:16.534 [READ_DONE     ] Reader-59    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:16.682 [READ_START    ] Reader-60    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:16.861 [READ_DONE     ] Reader-60    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:16.902 [READ_START    ] Reader-61    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:16.985 [READ_DONE     ] Reader-61    replica=1 active=0 loads=[0,0,0] writer=no
-20:04:17.305 [READ_START    ] Reader-62    replica=1 active=1 loads=[1,0,0] writer=no
-20:04:17.394 [READ_DONE     ] Reader-62    replica=1 active=0 loads=[0,0,0] writer=no
-
-done: 62 readers; 11 writes
+READ_START Reader-1 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-1 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-2 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-2 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-3 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-3 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-4 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-4 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-5 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-5 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-6 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-6 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-7 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+WRITE_PENDING Writer active=1 loads=[1,0,0] writerActive=no content=initial content v0
+READ_DONE Reader-7 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+WRITE_DONE Writer active=0 loads=[0,0,0] writerActive=yes content=Version 1 written by Writer.
+READ_START Reader-8 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-8 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-9 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-9 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
+READ_START Reader-10 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
+READ_DONE Reader-10 replica=1 active=0 loads=[0,0,0] writerActive=no content=-
