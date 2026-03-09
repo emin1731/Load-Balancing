@@ -45,12 +45,13 @@ Example:
 
 ```text
 READ_START Reader-3 replica=1 active=1 loads=[1,0,0] writerActive=no content=-
-WRITE_DONE Writer active=0 loads=[0,0,0] writerActive=yes content=Version 1 written by Writer.
+WRITE_DONE Writer replica=0 active=0 loads=[0,0,0] writerActive=yes content=Version 1 written by Writer.
 ```
 
 - active: total active readers.
 - loads=[a,b,c]: current readers on each replica.
 - writerActive: yes when writer is writing, otherwise no.
+- replica=0: event is not tied to a specific replica (for example writer events).
 
 ## Notes
 

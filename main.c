@@ -42,68 +42,45 @@ static int randomInRange(int min, int max)
 // print one log line (lock should be held)
 static void logEvent(const char *tag, const char *who, int replica, const char *content)
 {
-    if (replica >= 0)
-    fprintf(logFile, "%s %s replica=%d active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
-                tag, 
-                who, 
-                replica + 1, 
-                activeReaders,
-                replicaReaders[0], 
-                replicaReaders[1], 
-                replicaReaders[2],
-                writerActive ? "yes" : "no",
-                content ? content : "no content"
-            );
-    else
-    fprintf(logFile, "%s %s active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
-                tag, 
-                who, 
-                activeReaders,
-                replicaReaders[0], 
-                replicaReaders[1], 
-                replicaReaders[2],
-                writerActive ? "yes" : "no",
-                content ? content : "no content"
-            );
-    fflush(logFile);
+    // int replicaNumber = (replica >= 0) ? (replica + 1) : 0;
+    FILE *outputs[] = { logFile, stdout };
 
-    if (replica >= 0)
-    printf("%s %s replica=%d active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
-                tag, 
-                who, 
-                replica + 1, 
+    for (int outputIndex = 0; outputIndex < 2; outputIndex++) {
+        fprintf(outputs[outputIndex], "%s %s replica=%d active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
+                tag,
+                who,
+                replica,
                 activeReaders,
-                replicaReaders[0], 
-                replicaReaders[1], 
+                replicaReaders[0],
+                replicaReaders[1],
                 replicaReaders[2],
                 writerActive ? "yes" : "no",
-                content ? content : "no content"
-            );
-    else
-    printf("%s %s active=%d loads=[%d,%d,%d] writerActive=%s content=%s\n",
-                tag, 
-                who, 
-                activeReaders,
-                replicaReaders[0], 
-                replicaReaders[1], 
-                replicaReaders[2],
-                writerActive ? "yes" : "no",
-                content ? content : "no content"
-        );
+                content ? content : "no content");
+
+        fflush(outputs[outputIndex]);
+    }
 }
 
 // get the least loaded replica
 static int leastLoaded(void)
 {
-    int bestIndex = 0;
+    int minLoad = replicaReaders[0];
+    int candidates[NUM_REPLICAS];
+    int candidateCount = 0;
 
-    for (int i = 1; i < NUM_REPLICAS; i++) {
-        if (replicaReaders[i] < replicaReaders[bestIndex]) {
-            bestIndex = i;
+    for (int i = 0; i < NUM_REPLICAS; i++) {
+        if (replicaReaders[i] < minLoad) {
+            minLoad = replicaReaders[i];
         }
     }
 
-    return bestIndex;
+    for (int i = 0; i < NUM_REPLICAS; i++) {
+        if (replicaReaders[i] == minLoad) {
+            candidates[candidateCount++] = i;
+        }
+    }
+
+    return candidates[randomInRange(0, candidateCount - 1)];
 }
 
 // write same text to all replicas
@@ -147,6 +124,7 @@ static void *reader(void *arg)
     char replicaFileName[32];
     sprintf(replicaFileName, "replica_%d.txt", selectedReplicaIndex + 1);
     FILE *replicaFile = fopen(replicaFileName, "r");
+
     if (replicaFile) {
         char readBuffer[128];
         fgets(readBuffer, sizeof(readBuffer), replicaFile);
@@ -161,6 +139,7 @@ static void *reader(void *arg)
     replicaReaders[selectedReplicaIndex]--;
     activeReaders--;
     logEvent("READ_DONE", readerName, selectedReplicaIndex, "-");
+
     if (activeReaders == 0)
         pthread_cond_broadcast(&stateChanged);
     pthread_mutex_unlock(&lock);
@@ -174,14 +153,18 @@ static void *writer(void *arg)
 {
     (void)arg;
 
-    while (isSimulationRunning) {
+    while (1) {
         // wait some time before write
         sleepMs(randomInRange(1000, 3000));
-        if (!isSimulationRunning)
-            break;
 
         // block new readers
         pthread_mutex_lock(&lock);
+
+        if (!isSimulationRunning) {
+            pthread_mutex_unlock(&lock);
+            break;
+        }
+
         writerPending = 1;
         logEvent("WRITE_PENDING", "Writer", -1, latestContent);
 
@@ -189,12 +172,16 @@ static void *writer(void *arg)
         while (activeReaders > 0)
             pthread_cond_wait(&stateChanged, &lock);
 
-        // write same version to all replicas
+        // mark writer active, then do file I/O outside lock so lock hold time stays short
         writerActive = 1;
         writeVersion++;
         char content[128];
         sprintf(content, "Version %d written by Writer.", writeVersion);
+
+        pthread_mutex_unlock(&lock);
         writeReplicas(content);
+
+        pthread_mutex_lock(&lock);
         snprintf(latestContent, sizeof(latestContent), "%s", content);
         logEvent("WRITE_DONE", "Writer", -1, latestContent);
         writerActive = 0;
@@ -230,6 +217,7 @@ int main(void)
     pthread_t readerThread[MAX_READERS];
     int totalReadersSpawned = 0;
     time_t simulationStartTime = time(NULL);
+
     while (time(NULL) - simulationStartTime < SIM_SECONDS && totalReadersSpawned < MAX_READERS) {
         sleepMs(randomInRange(100, 500));
         pthread_create(&readerThread[totalReadersSpawned], NULL, reader, (void *)(long)(totalReadersSpawned + 1));
@@ -240,7 +228,11 @@ int main(void)
     for (int readerIndex = 0; readerIndex < totalReadersSpawned; readerIndex++)
         pthread_join(readerThread[readerIndex], NULL);
 
+    pthread_mutex_lock(&lock);
     isSimulationRunning = 0;
+    pthread_cond_broadcast(&stateChanged);
+    pthread_mutex_unlock(&lock);
+
     pthread_join(writerThread, NULL);
 
     fclose(logFile);
